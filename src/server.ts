@@ -29,18 +29,11 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
   /**************************************************************************** */
   app.get('/filteredimage', async (req, res) => {
-    let files: Array<string> = [];
-    const url = req.query.image_url;
-    if (url.match(/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/)) {
-      const filteredpath = await filterImageFromURL(url);
-      files.push(filteredpath);
-      const stream = fs.createReadStream(filteredpath);
-      stream
-        .once('end', function() {
-          stream.destroy();
-          deleteLocalFiles(files);
-        })
-        .pipe(res);
+    const { image_url } = req.query;
+    if (image_url) {
+      filterImageFromURL(image_url).then(filteredpath => {
+        res.status(200).sendFile(filteredpath, () => {deleteLocalFiles([filteredpath]);} );
+      })
     } else {
       res.status(400).send('Image url not valid');
     }
