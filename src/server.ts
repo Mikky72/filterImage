@@ -34,7 +34,7 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
     if (url.match(/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/)) {
       const filteredpath = await filterImageFromURL(url);
       files.push(filteredpath);
-      var stream = fs.createReadStream(filteredpath);
+      const stream = fs.createReadStream(filteredpath);
       stream
         .once('end', function() {
           stream.destroy();
